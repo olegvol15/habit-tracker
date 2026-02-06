@@ -1,4 +1,26 @@
-import { ConflictError } from "../../errors/AppError.js";
+import prisma from "../../db/prisma.js";
+import { NotFoundError } from "../../errors/AppError.js";
+import { mapPrismaError } from "../../errors/mapPrismaError.js";
+
+export async function getUsersService() {
+  return await prisma.user.findMany();
+}
+
+export async function getUserService(id) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {id}
+    })
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    return user;
+  } catch (err) {
+    throw mapPrismaError(err);
+  }
+}
 
 export async function createUserService(email) {
   try {
@@ -6,9 +28,6 @@ export async function createUserService(email) {
       data: { email },
     });
   } catch (err) {
-    if (err?.code === "P2002") {
-      throw new ConflictError("Email already exists");
-    }
-    throw err;
+    throw mapPrismaError(err);
   }
 }
