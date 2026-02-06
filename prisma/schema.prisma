@@ -15,6 +15,7 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   email String @unique
+  timezone String @default("UTC")
   createdAt DateTime @default(now())
 
   habits Habit[]
@@ -35,7 +36,7 @@ model Habit {
 
 model Checkin {
   id Int @id @default(autoincrement())
-  date DateTime
+  date DateTime @db.Date
   createdAt DateTime @default(now())
 
   userId Int
