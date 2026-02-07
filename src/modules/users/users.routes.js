@@ -7,14 +7,14 @@ import {
   deleteUser
 } from "./users.controller.js";
 import { emailValidator } from "../../middlewares/emailValidation.js";
-import { idValidator } from "../../middlewares/idValidation.js";
+import { paramIdValidator } from "../../middlewares/idValidation.js";
 
 const router = Router();
 
 router.get("/", getUsers);
-router.get("/:id", idValidator, getUser);
-router.patch("/:id", idValidator, emailValidator, updateEmail);
+router.get("/:id", paramIdValidator, getUser);
+router.patch("/:id", paramIdValidator, emailValidator, updateEmail);
 router.post("/", emailValidator, createUser);
-router.delete("/:id", idValidator, deleteUser);
+router.delete("/:id", paramIdValidator, deleteUser);
 
 export default router;
