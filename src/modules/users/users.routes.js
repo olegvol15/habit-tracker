@@ -12,9 +12,9 @@ import { paramIdValidator } from "../../middlewares/idValidation.js";
 const router = Router();
 
 router.get("/", getUsers);
-router.get("/:id", paramIdValidator, getUser);
-router.patch("/:id", paramIdValidator, emailValidator, updateEmail);
+router.get("/:id", paramIdValidator("id"), getUser);
+router.patch("/:id", paramIdValidator("id"), emailValidator, updateEmail);
 router.post("/", emailValidator, createUser);
-router.delete("/:id", paramIdValidator, deleteUser);
+router.delete("/:id", paramIdValidator("id"), deleteUser);
 
 export default router;
