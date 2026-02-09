@@ -1,22 +1,11 @@
 {
-  "name": "habit-api",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "habit-tracker",
+  "private": true,
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node src/server.js"
-  },
-  "type": "module",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "pg": "^8.18.0",
-    "prisma": "^7.3.0"
+    "dev": "pnpm -r dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "install:all": "pnpm install"
   }
 }
