@@ -67,7 +67,7 @@ export async function createCheckinService(userId, habitId) {
       throw new NotFoundError("Habit not found");
     }
 
-    const date = getLoclaDayDate(user.timezone);
+    const date = getLocalDayDate(user.timezone);
 
     return await prisma.checkin.create({
       data: { habitId, userId, date },
