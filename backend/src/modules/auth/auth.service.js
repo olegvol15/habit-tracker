@@ -92,3 +92,15 @@ export async function getMeService(userId) {
     throw mapPrismaError(err);
   }
 }
+
+export async function logoutService(sessionId) {
+  try {
+    await prisma.session.deleteMany({
+      where: {
+        id: sessionId,
+      },
+    });
+  } catch (err) {
+    throw mapPrismaError(err);
+  }
+}

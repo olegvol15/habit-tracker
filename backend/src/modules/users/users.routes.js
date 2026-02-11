@@ -6,8 +6,8 @@ import {
   updateEmail,
   deleteUser
 } from "./users.controller.js";
-import { emailValidator } from "../../middlewares/emailValidation.js";
-import { paramIdValidator } from "../../middlewares/idValidation.js";
+import { emailValidator } from "../../middlewares/validators/emailValidation.js";
+import { paramIdValidator } from "../../middlewares/validators/idValidation.js";
 
 const router = Router();
 

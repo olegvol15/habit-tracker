@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { paramIdValidator } from "../../middlewares/idValidation.js";
+import { paramIdValidator } from "../../middlewares/validators/idValidation.js";
 import { createCheckin, createHabit, getHabits } from "./habits.controller.js";
-import { habitTitleValidator } from "../../middlewares/habitTitleValidation.js";
+import { habitTitleValidator } from "../../middlewares/validators/habitTitleValidation.js";
 
 const router = Router({
   mergeParams: true,

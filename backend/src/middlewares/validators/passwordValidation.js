@@ -1,4 +1,4 @@
-import { BadRequestError } from "../errors/AppError";
+import { BadRequestError } from "../../errors/AppError.js";
 
 export function passwordValidator(req, _res, next) {
   const {password} = req.body;

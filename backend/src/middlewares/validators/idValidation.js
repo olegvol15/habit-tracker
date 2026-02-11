@@ -1,4 +1,4 @@
-import { BadRequestError } from "../errors/AppError.js";
+import { BadRequestError } from "../../errors/AppError.js";
 
 export function paramIdValidator(paramName) {
   
