@@ -1,3 +1,13 @@
 export const apiKeys = {
-  today: (userId: number) => ["today", userId] as const
-}
+  auth: {
+    currentUser: () => ["auth", "currentUser"] as const,
+  },
+
+  today: {
+    all: ["today"] as const,
+  },
+
+  habits: {
+    all: ["habits"] as const,
+  },
+};

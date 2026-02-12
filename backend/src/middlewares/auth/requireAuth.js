@@ -1,34 +1,28 @@
 import prisma from "../../db/prisma.js";
 import { UnauthorizedError } from "../../errors/AppError.js";
 
-export async function requireAuth(req, _res, next) {
-  const sessionId = req.cookies?.session;
+export async function requireAuth(req, res, next) {
+  try {
+    const sessionId = req.cookies?.session;
+    if (!sessionId) throw new UnauthorizedError("Unauthorized");
 
-  if(!sessionId) {
-    throw new UnauthorizedError("Unauthenticated")
-  }
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      select: { id: true, userId: true, expires: true },
+    });
 
-  const session = await prisma.session.findUnique({
-    where: {
-      id: sessionId
+    if (!session) throw new UnauthorizedError("Unauthorized");
+
+    if (session.expires && session.expires < new Date()) {
+      await prisma.session.delete({ where: { id: sessionId } });
+      throw new UnauthorizedError("Session expired");
     }
-  })
 
-  if (!session) {
-    throw new UnauthorizedError("Unauthenticated")
+    req.userId = session.userId;
+    req.sessionId = session.id;
+
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  if (sessionExist.expires < new Date()) {
-    await prisma.session.delete({
-      where: {
-        id: sessionId
-      }
-    })
-
-    throw new UnauthorizedError("Unauthenticated");
-  }
-
-  req.userId = session.userId;
-
-  return next()
 }

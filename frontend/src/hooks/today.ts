@@ -4,7 +4,7 @@ import { apiKeys } from "./api-keys";
 
 export function useTodayQuery(userId: number) {
   return useQuery({
-    queryKey: apiKeys.today(userId),
+    queryKey: [...apiKeys.today.all, userId],
     queryFn: () => todayApi.getToday(userId),
     staleTime: 30_000,
   });

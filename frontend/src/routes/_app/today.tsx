@@ -1,36 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { apiKeys } from "../hooks/api-keys";
-import { todayApi } from "../api/todayApi";
-import { useTodayQuery } from "../hooks/today";
+import { useTodayQuery } from "../../hooks/today";
+import { useCurrentUser } from "../../hooks/auth";
+import BlurText from "../../components/ui/blur-text-animation";
 
-const userId = 8; // временно, как в Postman (потом заменим на auth/me)
-
-export const Route = createFileRoute("/today")({
-  loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData({
-      queryKey: apiKeys.today(userId),
-      queryFn: () => todayApi.getToday(userId),
-      staleTime: 30_000,
-    });
-    return null;
-  },
+export const Route = createFileRoute("/_app/today")({
   component: TodayPage,
 });
 
 function TodayPage() {
-  const { data, isLoading, isError, error } = useTodayQuery(userId);
+  const { data: me } = useCurrentUser();
+  const userId = me?.user?.id;
+  const name = me?.user?.name;
+  const { data, isLoading, isError, error } = useTodayQuery(userId!);
 
   if (isLoading) return <div className="text-zinc-400">Loading...</div>;
-  if (isError) return <div className="text-red-400">Error: {(error as Error).message}</div>;
+  if (isError)
+    return (
+      <div className="text-red-400">Error: {(error as Error).message}</div>
+    );
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold">Today</h1>
-        <p className="text-zinc-400 text-sm">User: {userId}</p>
-      </div>
+    <div>
+      <BlurText
+        text={`Hello${name ? `, ${name}` : ""}! Let's look what you have done today!`}
+        delay={200}
+        animateBy="words"
+        direction="top"
+        className="text-3xl sm:text-5xl lg:text-7xl font-bold flex justify-center text-center"
+      />
 
-      <div className="grid gap-3">
+      <div className="grid gap-3 mt-6">
         {data.length === 0 ? (
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-zinc-300">
             No habits for today.
