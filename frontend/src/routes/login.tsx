@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { ensureCurrentUser } from "../lib/ensureCurrentUser";
 import { LoginForm } from "../components/auth/LoginForm";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -28,6 +29,13 @@ function LoginPage() {
             onSuccess={() => navigate({ to: redirectTo ?? "/today" })}
           />
         </div>
+
+        <p className="mt-6 text-center text-sm text-zinc-500">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-white hover:underline">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );

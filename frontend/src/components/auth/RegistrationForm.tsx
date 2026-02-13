@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRegister } from "../../hooks/auth";
+import { Button } from "../ui/button";
 
 type RegistrationFormProps = {
   onSuccess: () => void;
@@ -80,13 +81,9 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={register.isPending}
-        className="mt-2 w-full rounded-lg bg-white py-3 sm:py-2.5 text-base sm:text-sm font-semibold text-zinc-950 transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-50"
-      >
+      <Button type="submit" disabled={register.isPending} className="mt-2 w-full">
         {register.isPending ? "Creating account..." : "Create account"}
-      </button>
+      </Button>
     </form>
   );
 }

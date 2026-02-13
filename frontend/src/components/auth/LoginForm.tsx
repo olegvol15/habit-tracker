@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useLogin } from "../../hooks/auth";
+import { Button } from "../ui/button";
+import { Link } from "@tanstack/react-router";
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -65,13 +67,10 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={login.isPending}
-        className="mt-2 w-full rounded-lg bg-white py-3 sm:py-2.5 text-base sm:text-sm font-semibold text-zinc-950 transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-50"
-      >
+      <Button type="submit" disabled={login.isPending} className="mt-2 w-full">
         {login.isPending ? "Signing in..." : "Sign in"}
-      </button>
+      </Button>
+
     </form>
   );
 }

@@ -1,13 +1,13 @@
 import {
   createFileRoute,
-  Link,
   Outlet,
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import {CircleCheck, Home, Settings, User} from "lucide-react"
+import { CircleCheck, Home, Settings, User } from "lucide-react";
 import { ensureCurrentUser } from "../lib/ensureCurrentUser";
 import Dock from "../components/ui/dock";
+import { UserMenu } from "../components/ui/user-menu";
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ context, location }) => {
@@ -30,26 +30,30 @@ function AppLayout() {
     {
       icon: <Home size={18} />,
       label: "Today",
-      onClick: () => nav({to: "/today"}),
+      onClick: () => nav({ to: "/today" }),
     },
     {
       icon: <CircleCheck size={18} />,
       label: "Habits",
-      onClick: () => nav({to: "/habits"})
+      onClick: () => nav({ to: "/habits" }),
     },
     {
       icon: <User size={18} />,
       label: "Profile",
-      onClick: () => nav({to: "/profile"}),
+      onClick: () => nav({ to: "/profile" }),
     },
     {
       icon: <Settings size={18} />,
       label: "Settings",
-      onClick: () => nav({to: "/settings"}),
+      onClick: () => nav({ to: "/settings" }),
     },
   ];
+
   return (
     <>
+      <header className="flex items-center justify-start px-10 py-4">
+        <UserMenu />
+      </header>
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:pb-6">
         <Outlet />
       </main>
