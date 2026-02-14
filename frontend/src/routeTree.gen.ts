@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppTodayRouteImport } from './routes/_app/today'
+import { Route as AppHabitsRouteImport } from './routes/_app/habits'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -39,16 +40,23 @@ const AppTodayRoute = AppTodayRouteImport.update({
   path: '/today',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHabitsRoute = AppHabitsRouteImport.update({
+  id: '/habits',
+  path: '/habits',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/habits': typeof AppHabitsRoute
   '/today': typeof AppTodayRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/habits': typeof AppHabitsRoute
   '/today': typeof AppTodayRoute
   '/': typeof AppIndexRoute
 }
@@ -57,15 +65,23 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_app/habits': typeof AppHabitsRoute
   '/_app/today': typeof AppTodayRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/today'
+  fullPaths: '/' | '/login' | '/register' | '/habits' | '/today'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/register' | '/today' | '/'
-  id: '__root__' | '/_app' | '/login' | '/register' | '/_app/today' | '/_app/'
+  to: '/login' | '/register' | '/habits' | '/today' | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/login'
+    | '/register'
+    | '/_app/habits'
+    | '/_app/today'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -111,15 +127,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTodayRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/habits': {
+      id: '/_app/habits'
+      path: '/habits'
+      fullPath: '/habits'
+      preLoaderRoute: typeof AppHabitsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppHabitsRoute: typeof AppHabitsRoute
   AppTodayRoute: typeof AppTodayRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppHabitsRoute: AppHabitsRoute,
   AppTodayRoute: AppTodayRoute,
   AppIndexRoute: AppIndexRoute,
 }
