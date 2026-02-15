@@ -17,3 +17,13 @@ export type HabitsWeekResponse = {
   habits: Pick<Habit, "id" | "title" | "createdAt">[];
   checkins: Record<string, Record<string, boolean>>;
 };
+
+export type ToggleCheckinInput = {
+  date: string
+}
+
+export type ToggleCheckinResponse  = {
+  habitId: number
+  date: string
+  checked: boolean
+}

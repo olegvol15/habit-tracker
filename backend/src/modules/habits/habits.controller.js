@@ -1,5 +1,5 @@
 import {
-  createCheckinService,
+  toggleCheckinService,
   createHabitService,
   deleteHabitService,
   getHabitsService,
@@ -44,10 +44,11 @@ export async function createHabit(req, res, next) {
 export async function createCheckin(req, res, next) {
   try {
     const userId = req.userId;
-    const habitId = req.params.habitId;
+    const habitId = Number(req.params.habitId);
+    const { date } = req.body;
 
-    const checkin = await createCheckinService(userId, habitId);
-    return res.status(201).json(checkin);
+    const result = await toggleCheckinService(userId, habitId, date);
+    return res.json(result);
   } catch (err) {
     return next(err);
   }

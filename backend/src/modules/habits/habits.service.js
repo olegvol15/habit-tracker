@@ -2,7 +2,6 @@ import prisma from "../../db/prisma.js";
 import { NotFoundError } from "../../errors/AppError.js";
 import { mapPrismaError } from "../../errors/mapPrismaError.js";
 import { addDaysUTC, toYMD } from "../../utils/addDaysUTC.js";
-import { getLocalDayDate } from "../../utils/getLocalDayDate.js";
 import { BadRequestError } from "../../errors/AppError.js";
 
 export async function getHabitsService(userId) {
@@ -92,22 +91,8 @@ export async function createHabitService(title, userId) {
   }
 }
 
-export async function createCheckinService(userId, habitId) {
+export async function toggleCheckinService(userId, habitId, dateStr) {
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        id: true,
-        timezone: true,
-      },
-    });
-
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-
     const habit = await prisma.habit.findFirst({
       where: { id: habitId, userId },
       select: { id: true },
@@ -117,11 +102,28 @@ export async function createCheckinService(userId, habitId) {
       throw new NotFoundError("Habit not found");
     }
 
-    const date = getLocalDayDate(user.timezone);
+    const date = new Date(`${dateStr}T00:00:00.000Z`);
+    if (Number.isNaN(date.getTime())) {
+      throw new BadRequestError("Invalid date");
+    }
 
-    return await prisma.checkin.create({
+    const existing = await prisma.checkin.findUnique({
+      where: {
+        userId_habitId_date: { userId, habitId, date },
+      },
+    });
+
+    if (existing) {
+      await prisma.checkin.delete({
+        where: { id: existing.id },
+      });
+      return { habitId, date: dateStr, checked: false };
+    }
+
+    await prisma.checkin.create({
       data: { habitId, userId, date },
     });
+    return { habitId, date: dateStr, checked: true };
   } catch (err) {
     throw mapPrismaError(err);
   }
