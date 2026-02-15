@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
-import { useWeekHabits } from "../../hooks/habits";
+import { useToggleCheckin, useWeekHabits } from "../../hooks/habits";
 
 function getMonday(): string {
   const now = new Date();
   const day = now.getUTCDay();
   const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + diff));
+  const monday = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + diff),
+  );
   return toYMD(monday);
 }
 
@@ -27,7 +29,11 @@ function formatRange(start: string): string {
   e.setUTCDate(e.getUTCDate() + 6);
 
   const fmt = (d: Date) =>
-    d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+    d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
 
   return `${fmt(s)} – ${fmt(e)}`;
 }
@@ -45,18 +51,29 @@ export function WeekTable({ userId }: WeekTableProps) {
   const [start, setStart] = useState(getMonday);
 
   const { data, isLoading, error } = useWeekHabits(userId, start);
+  const toggleCheckin = useToggleCheckin(userId, start);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => setStart((s) => addDays(s, -7))}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setStart((s) => addDays(s, -7))}
+        >
           <ChevronLeft size={16} />
           <span className="hidden sm:inline ml-1">Prev</span>
         </Button>
 
-        <span className="text-sm font-medium text-zinc-300">{formatRange(start)}</span>
+        <span className="text-sm font-medium text-zinc-300">
+          {formatRange(start)}
+        </span>
 
-        <Button variant="ghost" size="sm" onClick={() => setStart((s) => addDays(s, 7))}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setStart((s) => addDays(s, 7))}
+        >
           <span className="hidden sm:inline mr-1">Next</span>
           <ChevronRight size={16} />
         </Button>
@@ -79,9 +96,14 @@ export function WeekTable({ userId }: WeekTableProps) {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="pb-2 pr-3 text-left text-xs font-medium text-zinc-500">Habit</th>
+                <th className="pb-2 pr-3 text-left text-xs font-medium text-zinc-500">
+                  Habit
+                </th>
                 {data.days.map((day) => (
-                  <th key={day} className="pb-2 text-center text-xs font-medium text-zinc-500">
+                  <th
+                    key={day}
+                    className="pb-2 text-center text-xs font-medium text-zinc-500"
+                  >
                     {getDayLabel(day)}
                   </th>
                 ))}
@@ -94,16 +116,30 @@ export function WeekTable({ userId }: WeekTableProps) {
                     {habit.title}
                   </td>
                   {data.days.map((day) => {
-                    const checked = data.checkins[String(habit.id)]?.[day] ?? false;
+                    const checked =
+                      data.checkins[String(habit.id)]?.[day] ?? false;
                     return (
                       <td key={day} className="py-1.5">
                         <div className="flex justify-center">
-                          <div
+                          <button
+                            type="button"
+                            aria-label={
+                              checked
+                                ? `Uncheck ${habit.title} for ${day}`
+                                : `Check ${habit.title} for ${day}`
+                            }
+                            onClick={() =>
+                              toggleCheckin.mutate({
+                                habitId: habit.id,
+                                payload: { date: day },
+                              })
+                            }
                             className={[
-                              "h-8 w-8 rounded-md border transition-colors",
+                              "h-8 w-8 rounded-md border transition-colors cursor-pointer",
+                              "hover:opacity-80",
                               checked
                                 ? "border-emerald-600 bg-emerald-500"
-                                : "border-zinc-700 bg-zinc-800",
+                                : "border-zinc-700 bg-zinc-800 hover:border-zinc-600",
                             ].join(" ")}
                           />
                         </div>

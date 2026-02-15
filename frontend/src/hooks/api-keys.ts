@@ -9,6 +9,6 @@ export const apiKeys = {
 
   habits: {
     all: ["habits"] as const,
-    week: (start: string) => ["habits", "week", start] as const,
+     week: (userId: number, start: string) => ["habits", "week", userId, start] as const,
   },
 };
