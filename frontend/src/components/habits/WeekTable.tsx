@@ -43,15 +43,11 @@ function getDayLabel(dateStr: string): string {
   return d.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
 }
 
-type WeekTableProps = {
-  userId: number;
-};
-
-export function WeekTable({ userId }: WeekTableProps) {
+export function WeekTable() {
   const [start, setStart] = useState(getMonday);
 
-  const { data, isLoading, error } = useWeekHabits(userId, start);
-  const toggleCheckin = useToggleCheckin(userId, start);
+  const { data, isLoading, error } = useWeekHabits(start);
+  const toggleCheckin = useToggleCheckin(start);
 
   return (
     <div className="flex flex-col gap-4">

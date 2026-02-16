@@ -9,8 +9,8 @@ const router = Router();
 router.get("/health", (req, res) => res.json({ status: "ok" }));
 
 router.use("/users", usersRouter);
-router.use("/users/:userId/habits", habitsRouter)
-router.use("/users/:userId/today", todayRouter)
+router.use("/habits", habitsRouter)
+router.use("/today", todayRouter)
 router.use("/auth", authRouter)
 
 export default router;

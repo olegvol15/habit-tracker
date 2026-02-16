@@ -4,14 +4,13 @@ import { Button } from "../ui/button";
 import {Modal} from "../ui/modal";
 
 type CreateHabitModalProps = {
-  userId: number;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export default function CreateHabitModal({ userId, isOpen, onClose }: CreateHabitModalProps) {
+export default function CreateHabitModal({ isOpen, onClose }: CreateHabitModalProps) {
   const [title, setTitle] = useState("");
-  const createHabit = useCreateHabit(userId);
+  const createHabit = useCreateHabit();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -9,9 +9,8 @@ export const Route = createFileRoute("/_app/today")({
 
 function TodayPage() {
   const { data: me } = useCurrentUser();
-  const userId = me?.user?.id;
   const name = me?.user?.name;
-  const { data, isLoading, isError, error } = useTodayQuery(userId!);
+  const { data, isLoading, isError, error } = useTodayQuery();
 
   if (isLoading) return <div className="text-zinc-400">Loading...</div>;
   if (isError)

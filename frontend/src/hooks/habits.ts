@@ -6,35 +6,35 @@ import {
   type ToggleCheckinInput,
 } from "../types/habit";
 
-export function useHabitsQuery(userId: number) {
+export function useHabitsQuery() {
   return useQuery({
-    queryKey: [...apiKeys.habits.all, userId],
-    queryFn: () => habitsApi.getHabits(userId),
+    queryKey: apiKeys.habits.all,
+    queryFn: () => habitsApi.getHabits(),
   });
 }
 
-export function useWeekHabits(userId: number, start: string) {
+export function useWeekHabits(start: string) {
   return useQuery({
-    queryKey: [...apiKeys.habits.week(userId, start)],
-    queryFn: () => habitsApi.getWeekHabits(userId, start),
+    queryKey: [...apiKeys.habits.week(start)],
+    queryFn: () => habitsApi.getWeekHabits(start),
   });
 }
 
-export function useCreateHabit(userId: number) {
+export function useCreateHabit() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: { title: string }) =>
-      habitsApi.createHabit(userId, payload),
+      habitsApi.createHabit(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: apiKeys.habits.all });
     },
   });
 }
 
-export function useToggleCheckin(userId: number, start: string) {
+export function useToggleCheckin(start: string) {
   const queryClient = useQueryClient();
-  const weekKey = apiKeys.habits.week(userId, start);
+  const weekKey = apiKeys.habits.week(start);
 
   return useMutation({
     mutationFn: ({
@@ -43,7 +43,7 @@ export function useToggleCheckin(userId: number, start: string) {
     }: {
       habitId: number;
       payload: ToggleCheckinInput;
-    }) => habitsApi.toggleCheckin(userId, habitId, payload),
+    }) => habitsApi.toggleCheckin(habitId, payload),
 
     onMutate: async ({ habitId, payload }) => {
       await queryClient.cancelQueries({ queryKey: weekKey });
@@ -90,11 +90,11 @@ export function useToggleCheckin(userId: number, start: string) {
   });
 }
 
-export function useDeleteHabit(userId: number) {
+export function useDeleteHabit() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (habitId: number) => habitsApi.deleteHabit(userId, habitId),
+    mutationFn: (habitId: number) => habitsApi.deleteHabit(habitId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: apiKeys.habits.all });
     },

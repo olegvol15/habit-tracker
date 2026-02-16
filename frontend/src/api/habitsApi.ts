@@ -2,29 +2,29 @@ import { apiClient } from "../lib/api";
 import { type ToggleCheckinResponse, type CreateHabitInput, type Habit, type HabitsResponse, type HabitsWeekResponse, type ToggleCheckinInput } from "../types/habit";
 
 export const habitsApi = {
-  getHabits: async (userId: number) => {
-    const { data } = await apiClient.get<HabitsResponse>(`/users/${userId}/habits`);
+  getHabits: async () => {
+    const { data } = await apiClient.get<HabitsResponse>(`/habits`);
     return data;
   },
 
-  getWeekHabits: async (userId: number, start: string) => {
-    const { data } = await apiClient.get<HabitsWeekResponse>(`/users/${userId}/habits/week`, {
+  getWeekHabits: async (start: string) => {
+    const { data } = await apiClient.get<HabitsWeekResponse>(`/habits/week`, {
       params: { start },
     });
     return data;
   },
 
-  createHabit: async (userId: number, payload: CreateHabitInput) => {
-    const { data } = await apiClient.post<Habit>(`/users/${userId}/habits`, payload);
+  createHabit: async (payload: CreateHabitInput) => {
+    const { data } = await apiClient.post<Habit>(`/habits`, payload);
     return data;
   },
 
-  toggleCheckin: async (userId: number, habitId: number, payload: ToggleCheckinInput) => {
-    const {data} = await apiClient.post<ToggleCheckinResponse>(`/users/${userId}/habits/${habitId}/checkins`, payload);
+  toggleCheckin: async (habitId: number, payload: ToggleCheckinInput) => {
+    const {data} = await apiClient.post<ToggleCheckinResponse>(`/habits/${habitId}/checkins`, payload);
     return data;
   },
 
-  deleteHabit: async (userId: number, habitId: number) => {
-    await apiClient.delete(`/users/${userId}/habits/${habitId}`);
+  deleteHabit: async (habitId: number) => {
+    await apiClient.delete(`/habits/${habitId}`);
   },
 };
