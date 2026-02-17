@@ -24,7 +24,7 @@ router.post("/", habitTitleValidator, createHabit);
 
 router.post("/:habitId/checkins", paramIdValidator("habitId"), createCheckin);
 
-router.patch("/:habitId", paramIdValidator("habitId"), editHabit)
+router.patch("/:habitId", paramIdValidator("habitId"), habitTitleValidator, editHabit)
 
 router.delete("/:habitId", paramIdValidator("habitId"), deleteHabit)
 

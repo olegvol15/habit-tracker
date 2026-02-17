@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { DropdownMenu } from "../ui/dropdown-menu";
 import { useToggleCheckin, useWeekHabits, useDeleteHabit, useEditHabit } from "../../hooks/habits";
+import { validateHabitTitle } from "../../utils/validators";
 
 function getMonday(): string {
   const now = new Date();
@@ -65,9 +67,12 @@ function HabitRow({
 
   const save = () => {
     const trimmed = draft.trim();
-    if (trimmed && trimmed !== habit.title) {
-      editHabit.mutate({ habitId: habit.id, title: trimmed });
-    }
+    if (trimmed === habit.title) { setEditing(false); return; }
+
+    const titleError = validateHabitTitle(trimmed);
+    if (titleError) { toast.error(titleError); return; }
+
+    editHabit.mutate({ habitId: habit.id, title: trimmed });
     setEditing(false);
   };
 

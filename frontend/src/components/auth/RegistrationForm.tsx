@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { useRegister } from "../../hooks/auth";
 import { Button } from "../ui/button";
+import { validateEmail, validatePassword } from "../../utils/validators";
 
 type RegistrationFormProps = {
   onSuccess: () => void;
@@ -10,13 +12,17 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
   const register = useRegister();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+
+    const emailError = validateEmail(email);
+    if (emailError) { toast.error(emailError); return; }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) { toast.error(passwordError); return; }
 
     try {
       await register.mutateAsync({
@@ -27,7 +33,7 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       });
       onSuccess();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
     }
   };
 
@@ -75,13 +81,7 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
         />
       </label>
 
-      {error && (
-        <div className="rounded-lg border border-red-800/50 bg-red-950/50 px-3.5 py-2.5 text-sm text-red-300">
-          {error}
-        </div>
-      )}
-
-      <Button type="submit" disabled={register.isPending} className="mt-2 w-full">
+<Button type="submit" disabled={register.isPending} className="mt-2 w-full">
         {register.isPending ? "Creating account..." : "Create account"}
       </Button>
     </form>

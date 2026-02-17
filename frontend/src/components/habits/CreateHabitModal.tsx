@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { useCreateHabit } from "../../hooks/habits";
 import { Button } from "../ui/button";
-import {Modal} from "../ui/modal";
+import { Modal } from "../ui/modal";
+import { validateHabitTitle } from "../../utils/validators";
 
 type CreateHabitModalProps = {
   isOpen: boolean;
@@ -15,7 +17,8 @@ export default function CreateHabitModal({ isOpen, onClose }: CreateHabitModalPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim()) return;
+    const titleError = validateHabitTitle(title);
+    if (titleError) { toast.error(titleError); return; }
 
     createHabit.mutate(
       { title: title.trim() },

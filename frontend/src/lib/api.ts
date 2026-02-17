@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 export const apiClient = axios.create({
   baseURL: "/api",
@@ -18,6 +19,12 @@ apiClient.interceptors.response.use(
       "Unknown API error";
 
     error.message = message;
+
+    const status = error.response?.status;
+    if (status && status !== 401) {
+      toast.error(message);
+    }
+
     return Promise.reject(error);
   },
 );

@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { useLogin } from "../../hooks/auth";
 import { Button } from "../ui/button";
 import { Link } from "@tanstack/react-router";
+import { validateEmail, validatePassword } from "../../utils/validators";
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -10,23 +12,24 @@ type LoginFormProps = {
 export function LoginForm({ onSuccess }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
   const login = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+
+    const emailError = validateEmail(email);
+    if (emailError) { toast.error(emailError); return; }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) { toast.error(passwordError); return; }
 
     try {
       await login.mutateAsync({ email, password });
       onSuccess();
     } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ??
-        (err instanceof Error ? err.message : "Something went wrong");
-      setError(message);
+      // 401 is skipped by global interceptor, so handle it here
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
     }
   };
 
@@ -61,13 +64,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         />
       </label>
 
-      {error && (
-        <div className="rounded-lg border border-red-800/50 bg-red-950/50 px-3.5 py-2.5 text-sm text-red-300">
-          {error}
-        </div>
-      )}
-
-      <Button type="submit" disabled={login.isPending} className="mt-2 w-full">
+<Button type="submit" disabled={login.isPending} className="mt-2 w-full">
         {login.isPending ? "Signing in..." : "Sign in"}
       </Button>
 
