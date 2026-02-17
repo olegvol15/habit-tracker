@@ -26,6 +26,7 @@ export default function CreateHabitModal({ isOpen, onClose }: CreateHabitModalPr
         onSuccess: () => {
           setTitle("");
           onClose();
+          toast.success("Habit created successfully");
         },
       }
     );

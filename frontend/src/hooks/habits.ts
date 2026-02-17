@@ -85,6 +85,7 @@ export function useToggleCheckin(start: string) {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: weekKey });
+      queryClient.invalidateQueries({ queryKey: apiKeys.today.all });
     },
   });
 }

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useLogin } from "../../hooks/auth";
 import { Button } from "../ui/button";
-import { Link } from "@tanstack/react-router";
 import { validateEmail, validatePassword } from "../../utils/validators";
 
 type LoginFormProps = {
