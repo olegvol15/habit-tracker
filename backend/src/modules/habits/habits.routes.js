@@ -5,6 +5,7 @@ import {
   createHabit,
   getHabits,
   getWeekHabits,
+  editHabit,
   deleteHabit
 } from "./habits.controller.js";
 import { habitTitleValidator } from "../../middlewares/validators/habitTitleValidation.js";
@@ -22,6 +23,8 @@ router.get("/week", startDateValidator, getWeekHabits);
 router.post("/", habitTitleValidator, createHabit);
 
 router.post("/:habitId/checkins", paramIdValidator("habitId"), createCheckin);
+
+router.patch("/:habitId", paramIdValidator("habitId"), editHabit)
 
 router.delete("/:habitId", paramIdValidator("habitId"), deleteHabit)
 

@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
-import { useToggleCheckin, useWeekHabits } from "../../hooks/habits";
+import { DropdownMenu } from "../ui/dropdown-menu";
+import { useToggleCheckin, useWeekHabits, useDeleteHabit, useEditHabit } from "../../hooks/habits";
 
 function getMonday(): string {
   const now = new Date();
@@ -43,11 +44,89 @@ function getDayLabel(dateStr: string): string {
   return d.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
 }
 
+function HabitRow({
+  habit,
+  editHabit,
+  deleteHabit,
+  children,
+}: {
+  habit: { id: number; title: string };
+  editHabit: ReturnType<typeof useEditHabit>;
+  deleteHabit: ReturnType<typeof useDeleteHabit>;
+  children: React.ReactNode;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(habit.title);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editing) inputRef.current?.focus();
+  }, [editing]);
+
+  const save = () => {
+    const trimmed = draft.trim();
+    if (trimmed && trimmed !== habit.title) {
+      editHabit.mutate({ habitId: habit.id, title: trimmed });
+    }
+    setEditing(false);
+  };
+
+  return (
+    <tr>
+      <td className="py-2 pr-8 text-base font-medium text-white max-w-[160px] sm:max-w-[220px]">
+        <div className="flex items-center gap-0.5">
+          {editing ? (
+            <input
+              ref={inputRef}
+              size={Math.max(draft.length, 1)}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onBlur={save}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") save();
+                if (e.key === "Escape") {
+                  setDraft(habit.title);
+                  setEditing(false);
+                }
+              }}
+              className="min-w-0 max-w-full bg-transparent border-b border-zinc-500 text-sm text-white outline-none py-0.5"
+            />
+          ) : (
+            <span className="truncate">{habit.title}</span>
+          )}
+          <DropdownMenu
+            items={[
+              {
+                label: "Edit",
+                icon: <Edit size={14} />,
+                variant: "default",
+                onClick: () => {
+                  setDraft(habit.title);
+                  setEditing(true);
+                },
+              },
+              {
+                label: "Delete",
+                icon: <Trash2 size={14} />,
+                variant: "danger",
+                onClick: () => deleteHabit.mutate(habit.id),
+              },
+            ]}
+          />
+        </div>
+      </td>
+      {children}
+    </tr>
+  );
+}
+
 export function WeekTable() {
   const [start, setStart] = useState(getMonday);
 
   const { data, isLoading, error } = useWeekHabits(start);
   const toggleCheckin = useToggleCheckin(start);
+  const editHabit = useEditHabit();
+  const deleteHabit = useDeleteHabit();
 
   return (
     <div className="flex flex-col gap-4">
@@ -92,13 +171,13 @@ export function WeekTable() {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="pb-2 pr-3 text-left text-xs font-medium text-zinc-500">
+                <th className="pb-3 pr-8 text-left text-sm font-medium text-zinc-500 w-0">
                   Habit
                 </th>
                 {data.days.map((day) => (
                   <th
                     key={day}
-                    className="pb-2 text-center text-xs font-medium text-zinc-500"
+                    className="pb-3 pl-3 text-center text-sm font-medium text-zinc-500"
                   >
                     {getDayLabel(day)}
                   </th>
@@ -107,15 +186,17 @@ export function WeekTable() {
             </thead>
             <tbody>
               {data.habits.map((habit) => (
-                <tr key={habit.id}>
-                  <td className="py-1.5 pr-3 text-sm text-white truncate max-w-[140px] sm:max-w-[200px]">
-                    {habit.title}
-                  </td>
+                <HabitRow
+                  key={habit.id}
+                  habit={habit}
+                  editHabit={editHabit}
+                  deleteHabit={deleteHabit}
+                >
                   {data.days.map((day) => {
                     const checked =
                       data.checkins[String(habit.id)]?.[day] ?? false;
                     return (
-                      <td key={day} className="py-1.5">
+                      <td key={day} className="py-2 pl-3">
                         <div className="flex justify-center">
                           <button
                             type="button"
@@ -131,7 +212,7 @@ export function WeekTable() {
                               })
                             }
                             className={[
-                              "h-8 w-8 rounded-md border transition-colors cursor-pointer",
+                              "h-10 w-10 rounded-lg border transition-colors cursor-pointer",
                               "hover:opacity-80",
                               checked
                                 ? "border-emerald-600 bg-emerald-500"
@@ -142,7 +223,7 @@ export function WeekTable() {
                       </td>
                     );
                   })}
-                </tr>
+                </HabitRow>
               ))}
             </tbody>
           </table>

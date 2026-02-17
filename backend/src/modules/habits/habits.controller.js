@@ -3,7 +3,8 @@ import {
   createHabitService,
   deleteHabitService,
   getHabitsService,
-  getHabitsWeekService
+  getHabitsWeekService,
+  editHabitService,
 } from "./habits.service.js";
 
 export async function getHabits(req, res, next) {
@@ -54,15 +55,27 @@ export async function createCheckin(req, res, next) {
   }
 }
 
-export async function deleteHabit(req, res, next) {
+export async function editHabit(req, res, next) {
   try {
     const userId = req.userId;
-    const habitId = req.params.habitId;
+    const habitId = Number(req.params.habitId);
+    const { title } = req.body;
 
-    await deleteHabitService({userId, habitId});
-    return res.sendStatus(204);
+    const result = await editHabitService({ userId, habitId, title });
+    return res.json(result);
   } catch (err) {
     return next(err);
   }
 }
 
+export async function deleteHabit(req, res, next) {
+  try {
+    const userId = req.userId;
+    const habitId = req.params.habitId;
+
+    await deleteHabitService({ userId, habitId });
+    return res.sendStatus(204);
+  } catch (err) {
+    return next(err);
+  }
+}

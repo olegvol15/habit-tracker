@@ -1,5 +1,12 @@
 import { apiClient } from "../lib/api";
-import { type ToggleCheckinResponse, type CreateHabitInput, type Habit, type HabitsResponse, type HabitsWeekResponse, type ToggleCheckinInput } from "../types/habit";
+import {
+  type ToggleCheckinResponse,
+  type CreateHabitInput,
+  type Habit,
+  type HabitsResponse,
+  type HabitsWeekResponse,
+  type ToggleCheckinInput,
+} from "../types/habit";
 
 export const habitsApi = {
   getHabits: async () => {
@@ -20,7 +27,15 @@ export const habitsApi = {
   },
 
   toggleCheckin: async (habitId: number, payload: ToggleCheckinInput) => {
-    const {data} = await apiClient.post<ToggleCheckinResponse>(`/habits/${habitId}/checkins`, payload);
+    const { data } = await apiClient.post<ToggleCheckinResponse>(
+      `/habits/${habitId}/checkins`,
+      payload,
+    );
+    return data;
+  },
+
+  editHabit: async (habitId: number, title: string) => {
+    const { data } = await apiClient.patch<Habit>(`/habits/${habitId}`, { title });
     return data;
   },
 

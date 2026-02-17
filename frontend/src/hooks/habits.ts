@@ -24,8 +24,7 @@ export function useCreateHabit() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: { title: string }) =>
-      habitsApi.createHabit(payload),
+    mutationFn: (payload: { title: string }) => habitsApi.createHabit(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: apiKeys.habits.all });
     },
@@ -86,6 +85,18 @@ export function useToggleCheckin(start: string) {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: weekKey });
+    },
+  });
+}
+
+export function useEditHabit() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ habitId, title }: { habitId: number; title: string }) =>
+      habitsApi.editHabit(habitId, title),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: apiKeys.habits.all });
     },
   });
 }

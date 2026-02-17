@@ -30,7 +30,8 @@ export async function getHabitsWeekService({ userId, start, startDate }) {
   let startDt = startDate;
 
   if (!startDt) {
-    if (typeof start !== "string") throw new BadRequestError("start is required");
+    if (typeof start !== "string")
+      throw new BadRequestError("start is required");
     startDt = new Date(`${start}T00:00:00.000Z`);
     if (Number.isNaN(startDt.getTime()) || toYMD(startDt) !== start) {
       throw new BadRequestError("start is not a valid date");
@@ -40,7 +41,7 @@ export async function getHabitsWeekService({ userId, start, startDate }) {
   const endExclusive = addDaysUTC(startDt, 7);
 
   const days = Array.from({ length: 7 }, (_, i) =>
-    toYMD(addDaysUTC(startDt, i))
+    toYMD(addDaysUTC(startDt, i)),
   );
 
   const habits = await prisma.habit.findMany({
@@ -124,6 +125,26 @@ export async function toggleCheckinService(userId, habitId, dateStr) {
       data: { habitId, userId, date },
     });
     return { habitId, date: dateStr, checked: true };
+  } catch (err) {
+    throw mapPrismaError(err);
+  }
+}
+
+export async function editHabitService({ userId, habitId, title }) {
+  try {
+    const habit = await prisma.habit.findFirst({
+      where: { id: habitId, userId },
+      select: { id: true },
+    });
+
+    if (!habit) {
+      throw new NotFoundError("Habit not found");
+    }
+
+    return await prisma.habit.update({
+      where: { id: habitId },
+      data: { title },
+    });
   } catch (err) {
     throw mapPrismaError(err);
   }
