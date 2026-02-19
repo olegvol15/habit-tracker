@@ -71,7 +71,7 @@ export async function editHabit(req, res, next) {
 export async function deleteHabit(req, res, next) {
   try {
     const userId = req.userId;
-    const habitId = req.params.habitId;
+    const habitId = Number(req.params.habitId);
 
     await deleteHabitService({ userId, habitId });
     return res.sendStatus(204);
