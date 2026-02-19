@@ -58,13 +58,13 @@ export function WeekTable() {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="pb-3 pr-8 text-left text-sm font-medium text-zinc-500 w-0">
+                <th className="pb-3 pr-8 text-left text-xs sm:text-sm font-medium text-zinc-500 w-0">
                   Habit
                 </th>
                 {data.days.map((day) => (
                   <th
                     key={day}
-                    className="pb-3 pl-3 text-center text-sm font-medium text-zinc-500"
+                    className="pb-3 pl-3 text-center text-xs sm:text-sm font-medium text-zinc-500"
                   >
                     {getDayLabel(day)}
                   </th>

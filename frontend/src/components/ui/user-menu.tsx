@@ -32,10 +32,10 @@ export function UserMenu() {
   };
 
   return (
-    <div ref={menuRef} className="relative">
+    <div ref={menuRef} className="relative z-50">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-zinc-700 bg-zinc-800 transition-colors hover:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-950"
+        className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 border-zinc-700 bg-zinc-800 transition-colors hover:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-950"
       >
         {avatarUrl ? (
           <img
@@ -44,12 +44,12 @@ export function UserMenu() {
             className="h-full w-full object-cover"
           />
         ) : (
-          <User size={16} className="text-zinc-400" />
+          <User size={20} className="text-zinc-400" />
         )}
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full mt-2 w-56 rounded-xl border border-zinc-800 bg-zinc-900 p-3 shadow-xl">
+        <div className="absolute left-0 top-full mt-2 w-56 rounded-xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-lg p-3 shadow-xl">
           {(name || email) && (
             <div className="mb-3 border-b border-zinc-800 pb-3">
               {name && (

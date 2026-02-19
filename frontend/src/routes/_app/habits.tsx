@@ -13,7 +13,7 @@ function HabitsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 px-2 py-6 sm:p-6">
       <BlurText
         text="Motivation is what gets you started. Habit is what keeps you going."
         delay={200}
