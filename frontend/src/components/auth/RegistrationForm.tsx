@@ -4,7 +4,7 @@ import { useRegister } from "../../hooks/auth";
 import { Button } from "../ui/button";
 import {
   validateEmail,
-  validatePassword,
+  validatePasswordStrength,
   calculatePasswordStrength,
 } from "../../utils/validators";
 import { PasswordStrengthBar } from "../ui/password-strength-bar";
@@ -30,7 +30,7 @@ export function RegistrationForm({ onSuccess }: RegistrationFormProps) {
       return;
     }
 
-    const passwordError = validatePassword(password);
+    const passwordError = validatePasswordStrength(password);
     if (passwordError) {
       toast.error(passwordError);
       return;

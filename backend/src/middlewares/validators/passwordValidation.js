@@ -19,6 +19,12 @@ export function passwordValidator(req, _res, next) {
     return next(new BadRequestError("Password is too long"))
   }
 
+  return next();
+}
+
+export function passwordStrengthValidator(req, _res, next) {
+  const {password} = req.body;
+
   if (!/[!@#$%^&*]/.test(password)) {
     return next(new BadRequestError("Password must contain at least one special character"))
   }

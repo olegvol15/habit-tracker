@@ -25,6 +25,13 @@ export function validateEmail(email: string): string | null {
 export function validatePassword(password: string): string | null {
   if (!password) return "Password is required";
   if (password.length < 8) return "Password must be at least 8 characters";
+  if (password.length > 100) return "Password must be at most 100 characters";
+  return null;
+}
+
+export function validatePasswordStrength(password: string): string | null {
+  const base = validatePassword(password);
+  if (base) return base;
   if (!/[0-9]/.test(password)) return "Password must contain at least one number";
   if (!/[!@#$%^&*]/.test(password)) return "Password must contain at least one special character";
   return null;
@@ -49,7 +56,7 @@ export function calculatePasswordStrength(password: string): "Weak" | "Medium" |
     if (/[a-z]/.test(password)) score++;
     if (/[A-Z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
+    if (/[!@#$%^&*]/.test(password)) score++;
 
     if (score <= 3) return "Weak";
     if (score === 4) return "Medium";

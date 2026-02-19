@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { emailValidator } from "../../middlewares/validators/emailValidation.js";
-import { passwordValidator } from "../../middlewares/validators/passwordValidation.js";
+import { passwordValidator, passwordStrengthValidator } from "../../middlewares/validators/passwordValidation.js";
 import { requireAuth } from "../../middlewares/auth/requireAuth.js";
 import {
   getMeController,
@@ -14,7 +14,7 @@ const router = Router({
   mergeParams: true,
 });
 
-router.post("/register", authLimiter, emailValidator, passwordValidator, registerController);
+router.post("/register", authLimiter, emailValidator, passwordValidator, passwordStrengthValidator, registerController);
 router.post("/login", authLimiter, emailValidator, passwordValidator, loginController);
 router.get("/me", requireAuth, getMeController);
 router.post("/logout", requireAuth, logoutController);
