@@ -6,11 +6,12 @@ import {
   getHabits,
   getWeekHabits,
   editHabit,
-  deleteHabit
+  deleteHabit,
 } from "./habits.controller.js";
 import { habitTitleValidator } from "../../middlewares/validators/habitTitleValidation.js";
 import { requireAuth } from "../../middlewares/auth/requireAuth.js";
 import { startDateValidator } from "../../middlewares/validators/startDateValidation.js";
+import { checkinsLimiter } from "../../middlewares/rateLimiters.js";
 
 const router = Router({ mergeParams: true });
 
@@ -22,10 +23,20 @@ router.get("/week", startDateValidator, getWeekHabits);
 
 router.post("/", habitTitleValidator, createHabit);
 
-router.post("/:habitId/checkins", paramIdValidator("habitId"), createCheckin);
+router.post(
+  "/:habitId/checkins",
+  paramIdValidator("habitId"),
+  checkinsLimiter,
+  createCheckin,
+);
 
-router.patch("/:habitId", paramIdValidator("habitId"), habitTitleValidator, editHabit)
+router.patch(
+  "/:habitId",
+  paramIdValidator("habitId"),
+  habitTitleValidator,
+  editHabit,
+);
 
-router.delete("/:habitId", paramIdValidator("habitId"), deleteHabit)
+router.delete("/:habitId", paramIdValidator("habitId"), deleteHabit);
 
 export default router;

@@ -8,14 +8,15 @@ import {
   logoutController,
   registerController,
 } from "./auth.controller.js";
+import { authLimiter } from "../../middlewares/rateLimiters.js";
 
 const router = Router({
   mergeParams: true,
 });
 
-router.post("/register", emailValidator, passwordValidator, registerController);
-router.post("/login", emailValidator, passwordValidator, loginController);
+router.post("/register", authLimiter, emailValidator, passwordValidator, registerController);
+router.post("/login", authLimiter, emailValidator, passwordValidator, loginController);
 router.get("/me", requireAuth, getMeController);
-router.post("/logout", logoutController);
+router.post("/logout", requireAuth, logoutController);
 
 export default router;
