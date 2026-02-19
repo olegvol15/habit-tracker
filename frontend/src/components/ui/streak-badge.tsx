@@ -17,11 +17,10 @@ function getTier(streak: number) {
   return { color: "#52525b", glow: "shadow-none" };
 }
 
-function FireIcon({ color, size = 48 }: { color: string; size?: number }) {
+function FireIcon({ color, className }: { color: string; className?: string }) {
   return (
     <svg
-      width={size}
-      height={size}
+      className={className}
       viewBox="0 0 24 24"
       fill={color}
       fillOpacity={0.15}
@@ -40,19 +39,19 @@ export function StreakBadge({ streak, title }: StreakBadgeProps) {
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 p-6 flex flex-col items-center gap-1 shadow-lg ${tier.glow}`}
+      className={`group relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 p-4 sm:p-6 flex flex-col items-center gap-1 shadow-lg cursor-default transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-zinc-700 ${tier.glow}`}
     >
       <div
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0 opacity-[0.07] transition-opacity duration-300 group-hover:opacity-[0.15]"
         style={{
           background: `radial-gradient(circle at 50% 30%, ${tier.color}, transparent 70%)`,
         }}
       />
 
       <div className="relative flex flex-col items-center">
-        <FireIcon color={tier.color} size={52} />
+        <FireIcon color={tier.color} className="size-10 sm:size-[52px]" />
         <span
-          className="text-3xl font-extrabold tabular-nums -mt-0.5"
+          className="text-2xl sm:text-3xl font-extrabold tabular-nums -mt-0.5"
           style={{ color: tier.color }}
         >
           {streak}

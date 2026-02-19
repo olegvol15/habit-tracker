@@ -24,7 +24,11 @@ export function DropdownMenu({ items }: DropdownMenuProps) {
 
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
-      setPos({ top: rect.bottom + 4, left: rect.left });
+      const menuWidth = 140;
+      const left = rect.left + menuWidth > window.innerWidth
+        ? window.innerWidth - menuWidth - 8
+        : rect.left;
+      setPos({ top: rect.bottom + 4, left });
     }
 
     function handleClick(e: MouseEvent) {
@@ -47,9 +51,9 @@ export function DropdownMenu({ items }: DropdownMenuProps) {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="shrink-0 rounded-md p-0.5 text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+        className="shrink-0 rounded-md p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
       >
-        <MoreVertical size={14} />
+        <MoreVertical size={16} />
       </button>
 
       {open &&
@@ -57,7 +61,7 @@ export function DropdownMenu({ items }: DropdownMenuProps) {
           <div
             ref={menuRef}
             style={{ position: "fixed", top: pos.top, left: pos.left }}
-            className="z-50 min-w-[140px] rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 shadow-xl"
+            className="z-50 min-w-[140px] rounded-xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-lg p-1.5 shadow-xl"
           >
             {items.map((item) => (
               <button
