@@ -1,12 +1,8 @@
-export function getClientIp(req) {
-  return req.ip || req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
-}
-
 export function userOrIpKey(req) {
   if (req.userId) {
     return `user:${req.userId}`;
   }
-  return `ip:${getClientIp(req)}`;
+  return `ip:${req.ip}`;
 }
 
 export function rateLimitHandler(req, res, options) {
