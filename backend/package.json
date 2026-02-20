@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node src/server.js"
+    "dev": "tsx watch src/server.ts"
   },
   "type": "module",
   "keywords": [],
@@ -23,5 +23,14 @@
     "helmet": "^8.1.0",
     "pg": "^8.18.0",
     "prisma": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.12",
+    "@types/pg": "^8.16.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3"
   }
 }
