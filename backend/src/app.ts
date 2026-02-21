@@ -1,4 +1,5 @@
 import express from "express";
+import "./config/passport";
 import routes from "./routes/index";
 import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
@@ -8,7 +9,7 @@ import helmet from "helmet";
 const app = express();
 app.set("trust proxy", 1);
 
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN || "http://localhost:5173",

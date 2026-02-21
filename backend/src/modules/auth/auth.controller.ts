@@ -4,13 +4,53 @@ import {
   setSessionCookie,
 } from "../../utils/sessionCookie";
 import {
+  createSessionForUser,
   getMeService,
   loginService,
   logoutService,
   registerService,
 } from "./auth.service";
+import passport from "../../config/passport";
+import type { User } from "@prisma/client";
 
-export async function registerController(req: Request, res: Response, next: NextFunction) {
+export function googleAuthController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+}
+
+export function googleCallbackController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  passport.authenticate(
+    "google",
+    { session: false },
+    async (err: Error | null, user: User | false) => {
+      if (err) return next(err);
+      const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
+
+      if (!user) return res.redirect(`${frontendUrl}/login?error=oauth_failed`);
+
+      try {
+        const session = await createSessionForUser(user.id);
+        setSessionCookie(res, session.id);
+        return res.redirect(`${frontendUrl}/today`);
+      } catch (err) {
+        return next(err);
+      }
+    },
+  )(req, res, next);
+}
+
+export async function registerController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { email, password, name, timezone } = req.body;
 
@@ -27,7 +67,11 @@ export async function registerController(req: Request, res: Response, next: Next
   }
 }
 
-export async function loginController(req: Request, res: Response, next: NextFunction) {
+export async function loginController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { email, password } = req.body;
 
@@ -39,7 +83,11 @@ export async function loginController(req: Request, res: Response, next: NextFun
   }
 }
 
-export async function getMeController(req: Request, res: Response, next: NextFunction) {
+export async function getMeController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { user } = await getMeService(req.userId);
     return res.json({ user });
@@ -48,7 +96,11 @@ export async function getMeController(req: Request, res: Response, next: NextFun
   }
 }
 
-export async function logoutController(req: Request, res: Response, next: NextFunction) {
+export async function logoutController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const sessionId = req.cookies?.session;
 

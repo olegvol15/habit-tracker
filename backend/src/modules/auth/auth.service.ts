@@ -6,6 +6,57 @@ import { mapPrismaError } from "../../errors/mapPrismaError";
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
+export async function findOrCreateGoogleUser(profile: {
+  id: string;
+  email: string | undefined;
+  name: string | null;
+  avatarUrl: string | null;
+}) {
+  const { id: googleId, email, name, avatarUrl } = profile;
+
+  if (!email) {
+    throw new BadRequestError("Google account has no email address");
+  }
+
+  try {
+    // Case 1: already linked Google account
+    const byGoogleId = await prisma.user.findUnique({ where: { googleId } });
+    if (byGoogleId) return byGoogleId;
+
+    // Case 2: email exists (password account) — auto-link
+    const byEmail = await prisma.user.findUnique({ where: { email } });
+    if (byEmail) {
+      return prisma.user.update({
+        where: { id: byEmail.id },
+        data: {
+          googleId,
+          avatarUrl: byEmail.avatarUrl ?? avatarUrl,
+        },
+      });
+    }
+
+    // Case 3: brand new user
+    return prisma.user.create({
+      data: { email, googleId, name, avatarUrl },
+    });
+  } catch (err) {
+    throw mapPrismaError(err);
+  }
+}
+
+export async function createSessionForUser(userId: number) {
+  try {
+    return prisma.session.create({
+      data: {
+        userId,
+        expires: new Date(Date.now() + SESSION_TTL_MS),
+      },
+    });
+  } catch (err) {
+    throw mapPrismaError(err);
+  }
+}
+
 export async function registerService(email: string, password: string, name?: string | null, timezone?: string) {
   try {
     const existing = await prisma.user.findUnique({
@@ -27,12 +78,7 @@ export async function registerService(email: string, password: string, name?: st
       },
     });
 
-    const session = await prisma.session.create({
-      data: {
-        userId: user.id,
-        expires: new Date(Date.now() + SESSION_TTL_MS),
-      },
-    });
+    const session = await createSessionForUser(user.id);
 
     return {
       user: toPublicUser(user),
@@ -59,12 +105,7 @@ export async function loginService(email: string, password: string) {
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    const session = await prisma.session.create({
-      data: {
-        userId: user.id,
-        expires: new Date(Date.now() + SESSION_TTL_MS),
-      },
-    });
+    const session = await createSessionForUser(user.id);
 
     return {
       user: toPublicUser(user),

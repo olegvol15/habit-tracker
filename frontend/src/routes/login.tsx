@@ -1,11 +1,15 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { ensureCurrentUser } from "../lib/ensureCurrentUser";
 import { LoginForm } from "../components/auth/LoginForm";
+import { GoogleAuthButton } from "../components/auth/GoogleAuthButton";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+    error: typeof s.error === "string" ? s.error : undefined,
   }),
   beforeLoad: async ({ context }) => {
     const user = await ensureCurrentUser(context.queryClient);
@@ -16,7 +20,13 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { redirect: redirectTo } = Route.useSearch();
+  const { redirect: redirectTo, error } = Route.useSearch();
+
+  useEffect(() => {
+    if (error === "oauth_failed") {
+      toast.error("Google sign-in failed. Please try again.");
+    }
+  }, [error]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -28,6 +38,17 @@ function LoginPage() {
           <LoginForm
             onSuccess={() => navigate({ to: redirectTo ?? "/today" })}
           />
+
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-zinc-800" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-zinc-900/40 px-2 text-zinc-500 tracking-wider">or</span>
+            </div>
+          </div>
+
+          <GoogleAuthButton />
         </div>
 
         <p className="mt-6 text-center text-sm text-zinc-500">
