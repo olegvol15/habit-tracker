@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useGetProfile, useUpdateProfile, useDeleteAccount, useUploadAvatar } from "../../hooks/users";
 import { Button } from "../../components/ui/button";
 import { Modal } from "../../components/ui/modal";
+import { TimezoneSelect } from "../../components/ui/timezone-select";
 
 export const Route = createFileRoute("/_app/profile")({
   component: ProfilePage,
@@ -156,13 +157,7 @@ function ProfilePage() {
 
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-zinc-400">Timezone</span>
-            <input
-              type="text"
-              value={timezone}
-              onChange={(e) => setTimezone(e.target.value)}
-              placeholder="Europe/London"
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-3 sm:py-2.5 text-base sm:text-sm text-white placeholder-zinc-600 outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
-            />
+            <TimezoneSelect value={timezone} onChange={setTimezone} />
           </label>
 
           <Button type="submit" className="w-full" disabled={updateProfile.isPending}>
