@@ -29,3 +29,13 @@ export const checkinsLimiter = rateLimit({
   message: { error: "Too many checkins. Slow down" },
   handler: rateLimitHandler,
 });
+
+export const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: userOrIpKey,
+  message: { error: "Too many uploads. Try again later." },
+  handler: rateLimitHandler,
+});
