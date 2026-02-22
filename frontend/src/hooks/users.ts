@@ -20,6 +20,16 @@ export function useUpdateProfile() {
   });
 }
 
+export function useUploadAvatar() {
+  return useMutation({
+    mutationFn: usersApi.uploadAvatar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: apiKeys.users.profile() });
+      queryClient.invalidateQueries({ queryKey: apiKeys.auth.currentUser() });
+    },
+  });
+}
+
 export function useDeleteAccount() {
   return useMutation({
     mutationFn: usersApi.deleteUser,

@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import prisma from "../../db/prisma";
 import { NotFoundError } from "../../errors/AppError";
 import { mapPrismaError } from "../../errors/mapPrismaError";
@@ -54,6 +56,26 @@ export async function updateProfileService(
     return await prisma.user.update({
       where: { id },
       data,
+      omit: omitPasswordHash,
+    });
+  } catch (err) {
+    throw mapPrismaError(err);
+  }
+}
+
+export async function uploadAvatarService(id: number, filename: string) {
+  try {
+    const user = await prisma.user.findUnique({ where: { id }, select: { avatarUrl: true } });
+
+    // Delete old avatar file if it was locally uploaded
+    if (user?.avatarUrl?.startsWith("/uploads/avatars/")) {
+      const oldPath = path.join(process.cwd(), user.avatarUrl);
+      fs.unlink(oldPath, () => {});
+    }
+
+    return await prisma.user.update({
+      where: { id },
+      data: { avatarUrl: `/uploads/avatars/${filename}` },
       omit: omitPasswordHash,
     });
   } catch (err) {

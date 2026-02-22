@@ -49,11 +49,11 @@ function AppLayout() {
       <header className="flex items-center justify-start px-4 sm:px-10 py-4">
         <UserMenu />
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:pb-6">
+      <main className="mx-auto max-w-5xl px-4 py-6 pb-32">
         <Outlet />
       </main>
 
-      <footer>
+      <footer className="fixed bottom-0 left-0 right-0 z-40">
         <Dock
           items={items}
           panelHeight={68}

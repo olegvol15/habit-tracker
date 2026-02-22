@@ -12,6 +12,15 @@ export const usersApi = {
     return data;
   },
 
+  uploadAvatar: async (file: File) => {
+    const form = new FormData();
+    form.append("avatar", file);
+    const { data } = await apiClient.post<{ user: PublicUser }>("/users/me/avatar", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  },
+
   deleteUser: async () => {
     await apiClient.delete("/users/me");
   }

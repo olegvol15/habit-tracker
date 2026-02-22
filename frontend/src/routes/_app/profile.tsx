@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useGetProfile, useUpdateProfile, useDeleteAccount } from "../../hooks/users";
+import { useGetProfile, useUpdateProfile, useDeleteAccount, useUploadAvatar } from "../../hooks/users";
 import { Button } from "../../components/ui/button";
 import { Modal } from "../../components/ui/modal";
 
@@ -28,7 +28,8 @@ function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [timezone, setTimezone] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadAvatar = useUploadAvatar();
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -38,7 +39,6 @@ function ProfilePage() {
       setName(data.user.name ?? "");
       setEmail(data.user.email);
       setTimezone(data.user.timezone);
-      setAvatarUrl(data.user.avatarUrl ?? "");
     }
   }, [data?.user]);
 
@@ -49,7 +49,6 @@ function ProfilePage() {
         name: name.trim() || null,
         email,
         timezone,
-        avatarUrl: avatarUrl.trim() || null,
       });
       toast.success("Profile updated");
     } catch {
@@ -77,17 +76,47 @@ function ProfilePage() {
 
       {/* Avatar header */}
       <div className="flex flex-col items-center gap-3 pt-2">
-        {user.avatarUrl ? (
-          <img
-            src={user.avatarUrl}
-            alt={user.name ?? user.email}
-            className="h-20 w-20 rounded-full object-cover ring-2 ring-zinc-700"
-          />
-        ) : (
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800 ring-2 ring-zinc-700 text-2xl font-semibold text-white">
-            {initials}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadAvatar.isPending}
+          className="group relative h-20 w-20 rounded-full focus:outline-none"
+          aria-label="Change avatar"
+        >
+          {user.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt={user.name ?? user.email}
+              className="h-20 w-20 rounded-full object-cover ring-2 ring-zinc-700"
+            />
+          ) : (
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800 ring-2 ring-zinc-700 text-2xl font-semibold text-white">
+              {uploadAvatar.isPending ? "…" : initials}
+            </div>
+          )}
+          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 group-disabled:opacity-100">
+            <span className="text-xs font-medium text-white">
+              {uploadAvatar.isPending ? "Uploading…" : "Change"}
+            </span>
           </div>
-        )}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            e.target.value = "";
+            try {
+              await uploadAvatar.mutateAsync(file);
+              toast.success("Avatar updated");
+            } catch {
+              // global interceptor already toasts the error
+            }
+          }}
+        />
         <div className="text-center">
           <p className="text-lg font-semibold text-white">{user.name ?? "—"}</p>
           <p className="text-sm text-zinc-400">{user.email}</p>
@@ -98,17 +127,6 @@ function ProfilePage() {
       <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
         <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-zinc-400">Edit profile</h2>
         <form onSubmit={handleSave} className="space-y-4">
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-zinc-400">Avatar URL</span>
-            <input
-              type="url"
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="https://example.com/avatar.jpg"
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3.5 py-3 sm:py-2.5 text-base sm:text-sm text-white placeholder-zinc-600 outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
-            />
-          </label>
-
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-zinc-400">Name</span>
             <input
