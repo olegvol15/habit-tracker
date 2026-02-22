@@ -69,8 +69,13 @@ export async function uploadAvatarService(id: number, filename: string) {
 
     // Delete old avatar file if it was locally uploaded
     if (user?.avatarUrl?.startsWith("/uploads/avatars/")) {
-      const oldPath = path.join(process.cwd(), user.avatarUrl);
-      fs.unlink(oldPath, () => {});
+      const avatarsDir = path.resolve(process.cwd(), "uploads/avatars");
+      const oldPath = path.resolve(avatarsDir, path.basename(user.avatarUrl));
+      if (oldPath.startsWith(avatarsDir + path.sep)) {
+        fs.promises.unlink(oldPath).catch((err) => {
+          console.error(`Failed to delete old avatar: ${oldPath}`, err);
+        });
+      }
     }
 
     return await prisma.user.update({

@@ -1,12 +1,20 @@
 import multer from "multer";
 import path from "path";
 import crypto from "crypto";
+
 import { BadRequestError } from "../errors/AppError";
+
+const mimeToExt: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+};
 
 const storage = multer.diskStorage({
   destination: path.join(process.cwd(), "uploads/avatars"),
   filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
+    const ext = mimeToExt[file.mimetype];
     cb(null, `${crypto.randomUUID()}${ext}`);
   },
 });

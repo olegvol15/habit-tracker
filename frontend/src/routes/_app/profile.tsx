@@ -109,6 +109,10 @@ function ProfilePage() {
             const file = e.target.files?.[0];
             if (!file) return;
             e.target.value = "";
+            if (file.size > 2 * 1024 * 1024) {
+              toast.error("Image must be smaller than 2 MB");
+              return;
+            }
             try {
               await uploadAvatar.mutateAsync(file);
               toast.success("Avatar updated");
