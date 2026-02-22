@@ -33,3 +33,4 @@ export function emailValidator(req: Request, _res: Response, next: NextFunction)
   req.body.email = normalizedEmail;
   return next();
 }
+  

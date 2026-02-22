@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import "./config/passport";
 import routes from "./routes/index";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -18,6 +19,7 @@ app.use(
 );
 app.use(express.json({ limit: "10kb" }));
 app.use(cookieParser());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api", routes);
 app.use(errorHandler);
 

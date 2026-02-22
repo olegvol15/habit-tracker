@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppTodayRouteImport } from './routes/_app/today'
+import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppHabitsRouteImport } from './routes/_app/habits'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -40,6 +41,11 @@ const AppTodayRoute = AppTodayRouteImport.update({
   path: '/today',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppHabitsRoute = AppHabitsRouteImport.update({
   id: '/habits',
   path: '/habits',
@@ -51,12 +57,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/habits': typeof AppHabitsRoute
+  '/profile': typeof AppProfileRoute
   '/today': typeof AppTodayRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/habits': typeof AppHabitsRoute
+  '/profile': typeof AppProfileRoute
   '/today': typeof AppTodayRoute
   '/': typeof AppIndexRoute
 }
@@ -66,20 +74,22 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/habits': typeof AppHabitsRoute
+  '/_app/profile': typeof AppProfileRoute
   '/_app/today': typeof AppTodayRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/habits' | '/today'
+  fullPaths: '/' | '/login' | '/register' | '/habits' | '/profile' | '/today'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/register' | '/habits' | '/today' | '/'
+  to: '/login' | '/register' | '/habits' | '/profile' | '/today' | '/'
   id:
     | '__root__'
     | '/_app'
     | '/login'
     | '/register'
     | '/_app/habits'
+    | '/_app/profile'
     | '/_app/today'
     | '/_app/'
   fileRoutesById: FileRoutesById
@@ -127,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTodayRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/habits': {
       id: '/_app/habits'
       path: '/habits'
@@ -139,12 +156,14 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppHabitsRoute: typeof AppHabitsRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppTodayRoute: typeof AppTodayRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppHabitsRoute: AppHabitsRoute,
+  AppProfileRoute: AppProfileRoute,
   AppTodayRoute: AppTodayRoute,
   AppIndexRoute: AppIndexRoute,
 }
