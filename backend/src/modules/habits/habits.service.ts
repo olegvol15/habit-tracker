@@ -113,6 +113,12 @@ export async function toggleCheckinService(userId: number, habitId: number, date
       throw new BadRequestError("Invalid date");
     }
 
+    const todayUTC = new Date();
+    todayUTC.setUTCHours(0, 0, 0, 0);
+    if (date > todayUTC) {
+      throw new BadRequestError("Cannot check in for a future date");
+    }
+
     const existing = await prisma.checkin.findUnique({
       where: {
         userId_habitId_date: { userId, habitId, date },

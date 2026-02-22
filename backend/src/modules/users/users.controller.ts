@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import {
   deleteUserService,
   getUserService,
-  updateEmailService,
+  updateProfileService,
 } from "./users.service";
 
 export async function getUser(req: Request, res: Response, next: NextFunction) {
@@ -14,12 +14,12 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function updateEmail(req: Request, res: Response, next: NextFunction) {
+export async function updateProfile(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email } = req.body;
+    const { name, email, timezone, avatarUrl } = req.body;
 
-    const user = await updateEmailService(req.userId, email);
-    return res.json(user);
+    const user = await updateProfileService(req.userId, { name, email, timezone, avatarUrl });
+    return res.json({ user });
   } catch (err) {
     return next(err);
   }

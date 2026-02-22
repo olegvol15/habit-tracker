@@ -4,7 +4,7 @@ import {
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import { CircleCheck, Home, Settings, User } from "lucide-react";
+import { CircleCheck, Home, User } from "lucide-react";
 import { ensureCurrentUser } from "../lib/ensureCurrentUser";
 import Dock from "../components/ui/dock";
 import { UserMenu } from "../components/ui/user-menu";
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_app")({
     if (!user) {
       throw redirect({
         to: "/login",
-        search: { redirect: location.href },
+        search: { redirect: location.href, error: undefined },
       });
     }
   },
@@ -41,11 +41,6 @@ function AppLayout() {
       icon: <User size={18} />,
       label: "Profile",
       onClick: () => nav({ to: "/profile" }),
-    },
-    {
-      icon: <Settings size={18} />,
-      label: "Settings",
-      onClick: () => nav({ to: "/settings" }),
     },
   ];
 

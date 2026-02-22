@@ -1,6 +1,7 @@
 import prisma from "../../db/prisma";
 import { NotFoundError } from "../../errors/AppError";
 import { mapPrismaError } from "../../errors/mapPrismaError";
+import { calcHighestStreak } from "../../utils/calcStreak";
 
 const omitPasswordHash = { passwordHash: true } as const;
 
@@ -19,7 +20,16 @@ export async function getUserService(id: number) {
       throw new NotFoundError("User not found");
     }
 
-    return user;
+    const habits = await prisma.habit.findMany({
+      where: { userId: id },
+      include: { checkins: { select: { date: true } } },
+    });
+
+    const highestStreak = habits.reduce((best, habit) => {
+      return Math.max(best, calcHighestStreak(habit.checkins.map((c) => c.date)));
+    }, 0);
+
+    return { user, highestStreak };
   } catch (err) {
     throw mapPrismaError(err);
   }
@@ -36,11 +46,14 @@ export async function createUserService(email: string) {
   }
 }
 
-export async function updateEmailService(id: number, email: string) {
+export async function updateProfileService(
+  id: number,
+  data: { name?: string | null; email?: string, timezone?: string; avatarUrl?: string | null },
+) {
   try {
     return await prisma.user.update({
       where: { id },
-      data: { email },
+      data,
       omit: omitPasswordHash,
     });
   } catch (err) {

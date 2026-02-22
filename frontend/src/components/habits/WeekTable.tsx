@@ -82,11 +82,13 @@ export function WeekTable() {
                   {data.days.map((day) => {
                     const checked =
                       data.checkins[String(habit.id)]?.[day] ?? false;
+                    const isFuture = day > new Date().toISOString().slice(0, 10);
                     return (
                       <td key={day} className="py-2 pl-3">
                         <div className="flex justify-center">
                           <button
                             type="button"
+                            disabled={isFuture}
                             aria-label={
                               checked
                                 ? `Uncheck ${habit.title} for ${day}`
@@ -99,11 +101,12 @@ export function WeekTable() {
                               })
                             }
                             className={[
-                              "h-10 w-10 rounded-lg border transition-colors cursor-pointer",
-                              "hover:opacity-80",
-                              checked
-                                ? "border-emerald-600 bg-emerald-500"
-                                : "border-zinc-700 bg-zinc-800 hover:border-zinc-600",
+                              "h-10 w-10 rounded-lg border transition-colors",
+                              isFuture
+                                ? "border-zinc-800 bg-zinc-900 opacity-30 cursor-not-allowed"
+                                : checked
+                                  ? "border-emerald-600 bg-emerald-500 cursor-pointer hover:opacity-80"
+                                  : "border-zinc-700 bg-zinc-800 cursor-pointer hover:border-zinc-600",
                             ].join(" ")}
                           />
                         </div>
