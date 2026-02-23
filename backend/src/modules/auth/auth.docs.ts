@@ -1,21 +1,3 @@
-import { Router } from "express";
-import { emailValidator } from "../../middlewares/validators/emailValidation";
-import { passwordValidator, passwordStrengthValidator } from "../../middlewares/validators/passwordValidation";
-import { requireAuth } from "../../middlewares/auth/requireAuth";
-import {
-  googleAuthController,
-  googleCallbackController,
-  getMeController,
-  loginController,
-  logoutController,
-  registerController,
-} from "./auth.controller";
-import { authLimiter } from "../../middlewares/rateLimiters";
-
-const router = Router({
-  mergeParams: true,
-});
-
 /**
  * @openapi
  * tags:
@@ -64,7 +46,6 @@ const router = Router({
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/register", authLimiter, emailValidator, passwordValidator, passwordStrengthValidator, registerController);
 
 /**
  * @openapi
@@ -102,7 +83,6 @@ router.post("/register", authLimiter, emailValidator, passwordValidator, passwor
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/login", authLimiter, emailValidator, passwordValidator, loginController);
 
 /**
  * @openapi
@@ -129,7 +109,6 @@ router.post("/login", authLimiter, emailValidator, passwordValidator, loginContr
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get("/me", requireAuth, getMeController);
 
 /**
  * @openapi
@@ -150,7 +129,6 @@ router.get("/me", requireAuth, getMeController);
  *                 ok:
  *                   type: boolean
  */
-router.post("/logout", requireAuth, logoutController);
 
 /**
  * @openapi
@@ -162,7 +140,3 @@ router.post("/logout", requireAuth, logoutController);
  *       302:
  *         description: Redirect to Google
  */
-router.get("/google", authLimiter, googleAuthController);
-router.get("/google/callback", authLimiter, googleCallbackController);
-
-export default router;
