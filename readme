@@ -1,0 +1,8 @@
+# IdeaPick Landing
+
+Landing page for [IdeaPick](https://ideapick.app), a tool for validating app and SaaS ideas with real market data.
+
+Built with React, TypeScript, Vite and Tailwind.
+
+npm install
+npm run dev
